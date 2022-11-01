@@ -1,19 +1,25 @@
 import logo from './logo.svg';
 import './App.css';
 
-import { Amplify } from "aws-amplify";
-import awsconfig from "./aws-exports";
+
 
 import { DataStore } from '@aws-amplify/datastore';
 import { Todo } from './models';
 
 
 async function App() {
-  Amplify.configure(awsconfig);
-
-  const models = await DataStore.query(Todo);
-  const model = models[0];
-  console.log(model.name, model.description);
+  let models = await DataStore.query(Todo);
+  if (models.length < 10) {
+    await DataStore.save(
+      new Todo({
+        "name": "Lorem ipsum dolor sit amet",
+        "description": "Lorem ipsum dolor sit amet"
+      })
+    );
+  }
+  models = await DataStore.query(Todo);
+  const model = models[models.length - 1];
+  console.log(`models.length=${models.length}, model[-1].name=${model.name}, model[-1].description=${model.description}`);
 
   // await DataStore.save(
   //   new Todo({
